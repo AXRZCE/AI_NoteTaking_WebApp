@@ -73,18 +73,28 @@ export default function AboutPanel({ open, onClose }) {
                   How do I transcribe online meeting audio?
                 </summary>
                 <div className="text-sm text-gray-600 mt-1 pl-4 space-y-2">
-                  <p>
-                    Select "System Audio (Meetings)" in the Speech Recognition section, then click "Start".
-                    Your browser will ask for screen sharing permission - make sure to check "Share system audio"
-                    when prompted AND select "Entire Screen" or the specific application window.
-                  </p>
                   <p className="font-medium text-blue-700">
-                    Important: For desktop applications like YouTube app (not browser), Zoom, or Teams,
-                    you must select "Entire Screen" when sharing and ensure the application is actively playing audio.
+                    We offer multiple ways to capture meeting audio:
                   </p>
+
                   <p>
-                    If you're having trouble, click the "Show Debug" button in the Speech Recognition panel to see
-                    diagnostic information that can help troubleshoot the issue.
+                    <strong>Method 1: System Audio Guide (Recommended)</strong><br />
+                    Click the "System Audio Guide" button in the Speech Recognition section. This provides
+                    step-by-step instructions for setting up system audio capture based on your operating system.
+                    Once set up, use the regular "Microphone" option in Speech Recognition.
+                  </p>
+
+                  <p>
+                    <strong>Method 2: Audio Recorder</strong><br />
+                    Click the "Show Audio Tools" button to access the Audio Recorder. This allows you to record
+                    meeting audio directly and save it as a file. Position your device near the speakers for best results.
+                  </p>
+
+                  <p>
+                    <strong>Method 3: Browser System Audio</strong><br />
+                    For online meetings in your browser, select "System Audio (Meetings)" in the Speech Recognition section,
+                    then click "Start". When prompted, check "Share system audio" AND select the browser tab with your meeting.
+                    This works best for web-based meetings, not desktop applications.
                   </p>
                 </div>
               </details>
