@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://AXRZCE.github.io/meeting-note-taker",
+  "homepage": "https://AXRZCE.github.io/AI_NoteTaking_WebApp",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -6,7 +6,7 @@ A privacy-focused web application for taking meeting notes with speech-to-text c
 
 ## Live Demo
 
-Try the application here: [Meeting Note Taker](https://AXRZCE.github.io/meeting-note-taker/)
+Try the application here: [Meeting Note Taker](https://AXRZCE.github.io/AI_NoteTaking_WebApp/)
 
 ## Features
 
@@ -32,7 +32,7 @@ Try the application here: [Meeting Note Taker](https://AXRZCE.github.io/meeting-
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/AXRZCE/meeting-note-taker.git
+   git clone https://github.com/AXRZCE/AI_NoteTaking_WebApp.git
    cd meeting-note-taker
    ```
 
