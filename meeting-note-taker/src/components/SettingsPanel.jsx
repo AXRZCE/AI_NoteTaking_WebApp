@@ -1,51 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SettingsPanel = ({ 
-  settings, 
-  onUpdateSettings, 
-  onClose 
-}) => {
-  const [localSettings, setLocalSettings] = useState({ ...settings });
-  
+export default function SettingsPanel({ open, onClose, settings, onUpdateSettings }) {
+  const [localSettings, setLocalSettings] = useState(settings || {
+    theme: 'system',
+    fontSize: 16,
+    privacyLock: false,
+    autoSave: true,
+    defaultAppendMode: true,
+    language: 'en-US'
+  });
+
+  // Update local settings when props change
+  useEffect(() => {
+    if (settings) {
+      setLocalSettings(settings);
+    }
+  }, [settings]);
+
   const handleChange = (key, value) => {
     setLocalSettings(prev => ({
       ...prev,
       [key]: value
     }));
   };
-  
+
   const handleSave = () => {
-    onUpdateSettings(localSettings);
+    if (onUpdateSettings) {
+      onUpdateSettings(localSettings);
+    }
     onClose();
   };
-  
+
+  if (!open) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Settings</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-40 transition-opacity duration-200">
+      <div className="bg-white rounded-xl shadow-xl p-6 w-[360px] max-w-full max-h-[90vh] overflow-y-auto">
+        <header className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Settings</h3>
           <button
+            className="text-gray-400 hover:text-gray-700 transition-colors"
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Close settings"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            &#10005;
           </button>
-        </div>
-        
+        </header>
+
         <div className="space-y-6">
           {/* Theme Setting */}
           <div>
-            <h3 className="font-medium mb-2">Theme</h3>
+            <label className="block mb-2 font-medium text-gray-700">Theme</label>
             <div className="flex gap-2">
               <button
                 onClick={() => handleChange('theme', 'light')}
-                className={`px-4 py-2 rounded-lg border ${
-                  localSettings.theme === 'light' 
-                    ? 'bg-blue-100 border-blue-500' 
-                    : 'bg-white border-gray-300 hover:bg-gray-50'
+                className={`px-3 py-1.5 rounded-lg border transition-colors ${
+                  localSettings.theme === 'light'
+                    ? 'bg-blue-100 border-blue-500 text-blue-700'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
                 }`}
                 aria-pressed={localSettings.theme === 'light'}
               >
@@ -53,10 +65,10 @@ const SettingsPanel = ({
               </button>
               <button
                 onClick={() => handleChange('theme', 'dark')}
-                className={`px-4 py-2 rounded-lg border ${
-                  localSettings.theme === 'dark' 
-                    ? 'bg-blue-100 border-blue-500' 
-                    : 'bg-white border-gray-300 hover:bg-gray-50'
+                className={`px-3 py-1.5 rounded-lg border transition-colors ${
+                  localSettings.theme === 'dark'
+                    ? 'bg-blue-100 border-blue-500 text-blue-700'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
                 }`}
                 aria-pressed={localSettings.theme === 'dark'}
               >
@@ -64,10 +76,10 @@ const SettingsPanel = ({
               </button>
               <button
                 onClick={() => handleChange('theme', 'system')}
-                className={`px-4 py-2 rounded-lg border ${
-                  localSettings.theme === 'system' 
-                    ? 'bg-blue-100 border-blue-500' 
-                    : 'bg-white border-gray-300 hover:bg-gray-50'
+                className={`px-3 py-1.5 rounded-lg border transition-colors ${
+                  localSettings.theme === 'system'
+                    ? 'bg-blue-100 border-blue-500 text-blue-700'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
                 }`}
                 aria-pressed={localSettings.theme === 'system'}
               >
@@ -75,11 +87,12 @@ const SettingsPanel = ({
               </button>
             </div>
           </div>
-          
+
           {/* Font Size Setting */}
           <div>
-            <h3 className="font-medium mb-2">Font Size</h3>
-            <div className="flex items-center gap-4">
+            <label className="block mb-2 font-medium text-gray-700">Font Size</label>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-500">Small</span>
               <input
                 type="range"
                 min="12"
@@ -87,68 +100,66 @@ const SettingsPanel = ({
                 step="1"
                 value={localSettings.fontSize}
                 onChange={(e) => handleChange('fontSize', parseInt(e.target.value))}
-                className="w-full"
+                className="w-full accent-blue-600"
                 aria-label="Font size"
               />
-              <span className="text-gray-700 min-w-[2.5rem]">{localSettings.fontSize}px</span>
+              <span className="text-sm text-gray-500">Large</span>
+              <span className="text-gray-700 min-w-[2rem] text-right">{localSettings.fontSize}px</span>
             </div>
           </div>
-          
+
           {/* Privacy Settings */}
           <div>
-            <h3 className="font-medium mb-2">Privacy</h3>
-            <div className="space-y-2">
+            <label className="block mb-2 font-medium text-gray-700">Privacy</label>
+            <div className="space-y-3">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localSettings.privacyLock}
                   onChange={(e) => handleChange('privacyLock', e.target.checked)}
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-blue-600"
                 />
                 <span>Privacy Lock Mode</span>
               </label>
-              <p className="text-sm text-gray-500 ml-6">
+              <p className="text-xs text-gray-500 ml-6">
                 When enabled, notes will be automatically cleared when you close the app.
               </p>
-              
+
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localSettings.autoSave}
                   onChange={(e) => handleChange('autoSave', e.target.checked)}
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-blue-600"
                 />
                 <span>Auto-save Notes</span>
               </label>
-              <p className="text-sm text-gray-500 ml-6">
+              <p className="text-xs text-gray-500 ml-6">
                 Automatically save notes as you type.
               </p>
             </div>
           </div>
-          
+
           {/* Speech Recognition Settings */}
           <div>
-            <h3 className="font-medium mb-2">Speech Recognition</h3>
-            <div className="space-y-2">
+            <label className="block mb-2 font-medium text-gray-700">Speech Recognition</label>
+            <div className="space-y-3">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localSettings.defaultAppendMode}
                   onChange={(e) => handleChange('defaultAppendMode', e.target.checked)}
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-blue-600"
                 />
                 <span>Default to Append Mode</span>
               </label>
-              <p className="text-sm text-gray-500 ml-6">
-                When enabled, new speech will be appended to existing notes by default.
-              </p>
-              
+
               <div>
-                <label className="block mb-1">Language</label>
+                <label className="block mb-1 text-sm">Language</label>
                 <select
                   value={localSettings.language}
                   onChange={(e) => handleChange('language', e.target.value)}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                 >
                   <option value="en-US">English (US)</option>
                   <option value="en-GB">English (UK)</option>
@@ -164,7 +175,7 @@ const SettingsPanel = ({
             </div>
           </div>
         </div>
-        
+
         <div className="mt-6 flex justify-end gap-2">
           <button
             onClick={onClose}
@@ -182,6 +193,4 @@ const SettingsPanel = ({
       </div>
     </div>
   );
-};
-
-export default SettingsPanel;
+}

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SpeechToText from "./components/SpeechToText.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 import NoteEditor from "./components/NoteEditor.jsx";
-import ExportButton from "./components/ExportButton.jsx";
-import ImportButton from "./components/ImportButton.jsx";
-import NotesList from "./components/NotesList.jsx";
 import SettingsPanel from "./components/SettingsPanel.jsx";
 import AboutPanel from "./components/AboutPanel.jsx";
 import {
@@ -30,19 +27,19 @@ const DEFAULT_SETTINGS = {
 // Settings storage key
 const SETTINGS_KEY = 'meeting-note-taker-settings';
 
-const App = () => {
+export default function App() {
   // State for notes management
   const [activeNote, setActiveNote] = useState(null);
   const [notesList, setNotesList] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // State for settings and modals
   const [settings, setSettings] = useState(() => {
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
     return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
   });
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   // Apply theme based on settings
   const [currentTheme, setCurrentTheme] = useState('light');
@@ -192,9 +189,9 @@ const App = () => {
     }
   };
 
-  // Toggle sidebar visibility
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  // Handle importing content
+  const handleImport = (content) => {
+    handleNoteChange(content);
   };
 
   // Update settings
@@ -202,57 +199,64 @@ const App = () => {
     setSettings(newSettings);
   };
 
+  const themeClasses = currentTheme === 'dark'
+    ? 'bg-gray-900 text-white'
+    : 'bg-gray-100 text-gray-900';
+
   return (
-    <div className={`min-h-screen ${currentTheme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col`}>
-      <header className={`${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm py-4 px-6 border-b`}>
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <button
-              onClick={toggleSidebar}
-              className={`mr-4 p-2 rounded-lg ${currentTheme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} transition-colors`}
-              aria-label={isSidebarOpen ? "Hide notes list" : "Show notes list"}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <h1 className="text-2xl font-bold">Meeting Note Taker</h1>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <p className={`${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} hidden md:block mr-4`}>
-              Privacy-first speech-to-text
-            </p>
-
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className={`p-2 rounded-lg ${currentTheme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} transition-colors`}
-              aria-label="Open settings"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </button>
-
-            <button
-              onClick={() => setIsAboutOpen(true)}
-              className={`p-2 rounded-lg ${currentTheme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} transition-colors`}
-              aria-label="About and help"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </button>
-          </div>
+    <div className={`min-h-screen ${themeClasses} flex flex-col transition-colors duration-300`}>
+      {/* Header */}
+      <header className={`flex items-center justify-between px-6 py-4 ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow border-b`}>
+        <h1 className={`text-2xl font-bold tracking-tight ${currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
+          <span className="w-4 h-4 rounded-full bg-blue-600 inline-block mr-2"></span>
+          Meeting Note Taker
+        </h1>
+        <div className="space-x-2">
+          <button
+            className={`rounded-lg px-3 py-1 ${
+              currentTheme === 'dark'
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            } transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+            onClick={() => setSidebarOpen((open) => !open)}
+            aria-label="Toggle Sidebar"
+          >
+            {sidebarOpen ? "Hide Notes" : "Show Notes"}
+          </button>
+          <button
+            className={`rounded-lg px-3 py-1 ${
+              currentTheme === 'dark'
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            } transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Open Settings"
+          >
+            Settings
+          </button>
+          <button
+            className={`rounded-lg px-3 py-1 ${
+              currentTheme === 'dark'
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            } transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+            onClick={() => setAboutOpen(true)}
+            aria-label="About"
+          >
+            About
+          </button>
         </div>
       </header>
 
-      <main className="flex-grow flex">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        {isSidebarOpen && (
-          <aside className={`w-80 p-4 ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'} border-r overflow-y-auto`}>
-            <NotesList
+        {sidebarOpen && (
+          <aside className={`w-72 min-w-[220px] ${
+            currentTheme === 'dark'
+              ? 'bg-gray-800 border-gray-700'
+              : 'bg-white border-gray-200'
+          } border-r p-4 flex-shrink-0 transition-all duration-200 overflow-y-auto`}>
+            <Sidebar
               notes={notesList}
               activeNoteId={activeNote?.id}
               onSelectNote={handleSelectNote}
@@ -264,81 +268,48 @@ const App = () => {
           </aside>
         )}
 
-        {/* Main content */}
-        <div className="flex-grow p-4 overflow-y-auto">
-          <div className="max-w-3xl mx-auto">
-            {activeNote ? (
-              <>
-                <div className={`mb-4 ${currentTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow p-4`}>
-                  <h2 className="text-xl font-bold mb-1">{activeNote.title}</h2>
-                  <p className={`text-sm ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Created: {new Date(activeNote.createdAt).toLocaleString()}
-                  </p>
-                </div>
+        {/* Main Content */}
+        <main className="flex-1 p-6 overflow-auto">
+          <NoteEditor
+            note={activeNote}
+            onUpdateContent={handleNoteChange}
+            onImport={handleImport}
+            language={settings.language}
+            fontSize={settings.fontSize}
+          />
+        </main>
+      </div>
 
-                <SpeechToText
-                  onTranscriptChange={handleTranscriptChange}
-                  initialTranscript={activeNote.content}
-                  language={settings.language}
-                />
-                <NoteEditor
-                  notes={activeNote.content}
-                  setNotes={handleNoteChange}
-                  fontSize={settings.fontSize}
-                />
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <ImportButton
-                    onImport={(content) => handleNoteChange(content)}
-                  />
-                  <ExportButton
-                    notes={activeNote.content}
-                    noteTitle={activeNote.title}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className={`flex items-center justify-center h-64 ${currentTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow`}>
-                <p className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>Loading notes...</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </main>
-
-      <footer className={`${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500'} border-t py-4 px-6 text-center text-sm`}>
-        <div className="max-w-6xl mx-auto">
-          <p>Privacy-first. All notes are processed locally and saved in your browser.</p>
-          <p className="mt-1">
-            <a
-              href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'} hover:underline`}
-              aria-label="Learn more about Web Speech API"
-            >
-              Powered by Web Speech API
-            </a>
-          </p>
-        </div>
+      {/* Footer */}
+      <footer className={`${
+        currentTheme === 'dark'
+          ? 'bg-gray-800 border-gray-700 text-gray-400'
+          : 'bg-white border-gray-200 text-gray-500'
+      } text-xs p-3 flex flex-col md:flex-row items-center justify-between shadow-inner border-t`}>
+        <span>
+          Privacy-first. All notes are processed locally and saved in your browser.
+        </span>
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'} underline ml-2`}
+        >
+          Powered by Web Speech API
+        </a>
       </footer>
 
-      {/* Settings Panel */}
-      {isSettingsOpen && (
-        <SettingsPanel
-          settings={settings}
-          onUpdateSettings={handleUpdateSettings}
-          onClose={() => setIsSettingsOpen(false)}
-        />
-      )}
-
-      {/* About Panel */}
-      {isAboutOpen && (
-        <AboutPanel
-          onClose={() => setIsAboutOpen(false)}
-        />
-      )}
+      {/* Settings & About Panels */}
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        onUpdateSettings={handleUpdateSettings}
+      />
+      <AboutPanel
+        open={aboutOpen}
+        onClose={() => setAboutOpen(false)}
+      />
     </div>
   );
-};
-
-export default App;
+}

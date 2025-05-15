@@ -1,39 +1,107 @@
-import React from "react";
+import React, { useState } from "react";
+import SpeechToText from "./SpeechToText";
+import ImportButton from "./ImportButton";
+import ExportButton from "./ExportButton";
 
-const NoteEditor = ({ notes, setNotes, fontSize = 16 }) => {
+export default function NoteEditor({
+  note,
+  onUpdateContent,
+  onImport,
+  language = 'en-US',
+  fontSize = 16
+}) {
+  const [transcriptVisible, setTranscriptVisible] = useState(true);
+
   const handleChange = (e) => {
-    setNotes(e.target.value);
+    if (onUpdateContent) {
+      onUpdateContent(e.target.value);
+    }
   };
 
+  const handleTranscriptChange = (transcript) => {
+    if (onUpdateContent) {
+      onUpdateContent(transcript);
+    }
+  };
+
+  const handleImport = (content) => {
+    if (onImport) {
+      onImport(content);
+    }
+  };
+
+  if (!note) {
+    return (
+      <section className="bg-white rounded-2xl shadow-lg p-6 mb-4 flex items-center justify-center h-64">
+        <p className="text-gray-500">Select a note or create a new one to get started</p>
+      </section>
+    );
+  }
+
   return (
-    <div className="p-4 bg-white rounded-2xl shadow mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <label htmlFor="meeting-notes" className="block font-bold">
-          Meeting Notes:
-        </label>
-        <div className="text-sm text-gray-500">
-          {notes.length} characters
+    <section className="bg-white rounded-2xl shadow-lg p-6 mb-4">
+      <header className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">{note.title}</h2>
+        <span className="text-sm text-gray-400">
+          Created: {new Date(note.createdAt).toLocaleString()}
+        </span>
+      </header>
+
+      {/* Speech to Text Component */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-medium text-gray-700">Speech Recognition</h3>
+          <button
+            onClick={() => setTranscriptVisible(!transcriptVisible)}
+            className="text-sm text-blue-600 hover:text-blue-800"
+          >
+            {transcriptVisible ? 'Hide' : 'Show'}
+          </button>
+        </div>
+
+        {transcriptVisible && (
+          <SpeechToText
+            onTranscriptChange={handleTranscriptChange}
+            initialTranscript={note.content}
+            language={language}
+          />
+        )}
+      </div>
+
+      {/* Note Editor */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <label htmlFor="meeting-notes" className="font-medium text-gray-700">
+            Meeting Notes:
+          </label>
+          <div className="text-sm text-gray-400">
+            {note.content ? note.content.length : 0} characters
+          </div>
+        </div>
+
+        <textarea
+          id="meeting-notes"
+          className="w-full h-56 p-3 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          style={{ fontSize: `${fontSize}px` }}
+          value={note.content || ''}
+          onChange={handleChange}
+          placeholder="Edit your meeting notes here..."
+          aria-label="Meeting notes editor"
+        />
+
+        <div className="mt-2 text-sm text-gray-500">
+          <p>
+            You can edit these notes while speech recognition is paused.
+            When speech recognition is active, new text will be added based on the append mode setting.
+          </p>
         </div>
       </div>
 
-      <textarea
-        id="meeting-notes"
-        className="w-full h-56 p-2 border rounded-xl focus:outline-none focus:ring"
-        style={{ fontSize: `${fontSize}px` }}
-        value={notes}
-        onChange={handleChange}
-        placeholder="Edit your meeting notes here..."
-        aria-label="Meeting notes editor"
-      />
-
-      <div className="mt-2 text-sm text-gray-600">
-        <p>
-          You can edit these notes while speech recognition is paused.
-          When speech recognition is active, new text will be added based on the append mode setting.
-        </p>
+      {/* Export/Import Buttons */}
+      <div className="flex flex-wrap gap-2">
+        <ImportButton onImport={handleImport} />
+        <ExportButton notes={note.content || ''} noteTitle={note.title} />
       </div>
-    </div>
+    </section>
   );
-};
-
-export default NoteEditor;
+}
