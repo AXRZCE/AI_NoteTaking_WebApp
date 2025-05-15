@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://AXRZCE.github.io/meeting-note-taker/sitemap.xml
