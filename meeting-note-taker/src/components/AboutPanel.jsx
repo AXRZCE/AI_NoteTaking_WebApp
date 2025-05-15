@@ -72,12 +72,21 @@ export default function AboutPanel({ open, onClose }) {
                 <summary className="font-medium text-sm cursor-pointer hover:text-blue-600">
                   How do I transcribe online meeting audio?
                 </summary>
-                <p className="text-sm text-gray-600 mt-1 pl-4">
-                  Select "System Audio (Meetings)" in the Speech Recognition section, then click "Start".
-                  Your browser will ask for screen sharing permission - make sure to check "Share system audio"
-                  when prompted. This will capture audio from Zoom, Teams, or any other application playing sound
-                  on your computer.
-                </p>
+                <div className="text-sm text-gray-600 mt-1 pl-4 space-y-2">
+                  <p>
+                    Select "System Audio (Meetings)" in the Speech Recognition section, then click "Start".
+                    Your browser will ask for screen sharing permission - make sure to check "Share system audio"
+                    when prompted AND select "Entire Screen" or the specific application window.
+                  </p>
+                  <p className="font-medium text-blue-700">
+                    Important: For desktop applications like YouTube app (not browser), Zoom, or Teams,
+                    you must select "Entire Screen" when sharing and ensure the application is actively playing audio.
+                  </p>
+                  <p>
+                    If you're having trouble, click the "Show Debug" button in the Speech Recognition panel to see
+                    diagnostic information that can help troubleshoot the issue.
+                  </p>
+                </div>
               </details>
 
               <details className="group">

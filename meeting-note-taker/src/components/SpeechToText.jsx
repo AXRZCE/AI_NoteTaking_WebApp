@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useSpeechToText from "../hooks/useSpeechToText.jsx";
 import useSystemAudioCapture from "../hooks/useSystemAudioCapture.jsx";
 
 export default function SpeechToText({ onTranscriptChange, initialTranscript = "", language = 'en-US' }) {
   const [appendMode, setAppendMode] = useState(true);
   const [audioSource, setAudioSource] = useState("microphone"); // "microphone" or "system"
+  const [showDebug, setShowDebug] = useState(false);
+  const [debugLogs, setDebugLogs] = useState([]);
+  const debugLogRef = useRef(null);
 
   // Speech recognition hook for microphone
   const {
@@ -28,12 +31,20 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
     isCapturing,
     startCapturing,
     stopCapturing,
-    error: systemAudioError
+    error: systemAudioError,
+    debugInfo
   } = useSystemAudioCapture({
     onAudioCaptured: (audioData) => {
       // This is where we would process the audio data
       // For now, we're just using this to capture system audio
       // The actual transcription still happens through the Web Speech API
+    },
+    onDebugInfo: (info) => {
+      setDebugLogs(prev => [...prev, info]);
+      // Scroll debug log to bottom
+      if (debugLogRef.current) {
+        debugLogRef.current.scrollTop = debugLogRef.current.scrollHeight;
+      }
     }
   });
 
@@ -58,8 +69,8 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
       if (audioSource === "microphone") {
         startListening();
       } else if (audioSource === "system") {
-        // For system audio, we still need to use the microphone for speech recognition
-        // but we'll also capture system audio to route it to the microphone
+        // For system audio, we need to capture system audio and use speech recognition
+        setDebugLogs([]); // Clear debug logs
         await startCapturing();
         startListening();
       }
@@ -68,6 +79,7 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
 
   const handleReset = () => {
     resetTranscript();
+    setDebugLogs([]);
   };
 
   const handleAudioSourceChange = (source) => {
@@ -77,6 +89,7 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
       stopCapturing();
     }
     setAudioSource(source);
+    setDebugLogs([]);
   };
 
   return (
@@ -159,6 +172,14 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
             {audioSource === "microphone" ? "Listening to microphone..." : "Capturing system audio..."}
           </span>
         )}
+
+        {/* Debug toggle button */}
+        <button
+          onClick={() => setShowDebug(!showDebug)}
+          className="ml-auto text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
+        >
+          {showDebug ? "Hide Debug" : "Show Debug"}
+        </button>
       </div>
 
       {/* Transcript Display */}
@@ -177,22 +198,65 @@ export default function SpeechToText({ onTranscriptChange, initialTranscript = "
         </div>
       )}
 
+      {/* Debug Panel */}
+      {showDebug && (
+        <div className="mt-3 border border-gray-300 rounded-lg p-2">
+          <h4 className="text-sm font-medium text-gray-700 mb-1">Debug Information:</h4>
+          <div
+            ref={debugLogRef}
+            className="bg-gray-800 text-green-400 p-2 rounded text-xs font-mono h-32 overflow-y-auto"
+          >
+            {debugLogs.length === 0 ? (
+              <p>No debug logs yet. Start capturing to see logs.</p>
+            ) : (
+              debugLogs.map((log, index) => (
+                <div key={index} className="mb-1">
+                  {JSON.stringify(log, null, 2)}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Info Box */}
       <div className="mt-3 text-sm text-gray-500">
         <div className="bg-blue-50 p-3 rounded-lg">
           <h3 className="font-medium text-blue-800 mb-1">Speech Recognition Info:</h3>
           <ul className="list-disc pl-5 space-y-1 text-gray-600">
-            <li>Works best in Chrome, Edge, and Safari</li>
+            <li>Works best in Chrome and Edge browsers</li>
             <li>Requires microphone permission</li>
             {audioSource === "system" && (
-              <li className="font-medium text-blue-700">
-                System Audio mode will ask for screen sharing permission - select "Share system audio" when prompted
-              </li>
+              <>
+                <li className="font-medium text-blue-700">
+                  System Audio mode captures sound from your entire computer
+                </li>
+                <li className="font-medium text-blue-700">
+                  When prompted, select "Share system audio" AND select "Entire Screen" or an application window
+                </li>
+                <li>
+                  For YouTube app or other desktop applications, share your entire screen and make sure the app is playing audio
+                </li>
+              </>
             )}
             <li>All processing happens locally in your browser</li>
             <li>No data is sent to any server</li>
           </ul>
         </div>
+
+        {audioSource === "system" && (
+          <div className="bg-yellow-50 p-3 rounded-lg mt-2 border border-yellow-200">
+            <h3 className="font-medium text-yellow-800 mb-1">Troubleshooting System Audio:</h3>
+            <ol className="list-decimal pl-5 space-y-1 text-gray-700">
+              <li>Make sure you're using Chrome or Edge (latest version)</li>
+              <li>When the sharing dialog appears, check "Share system audio"</li>
+              <li>Select "Entire Screen" for best results with desktop applications</li>
+              <li>Make sure your application (YouTube, Zoom, etc.) is actually playing audio</li>
+              <li>Try adjusting your system volume to be louder</li>
+              <li>If it still doesn't work, click "Show Debug" to see diagnostic information</li>
+            </ol>
+          </div>
+        )}
       </div>
     </div>
   );
