@@ -2,7 +2,63 @@
   "hash": "21e7e68b",
   "configHash": "241250f7",
   "lockfileHash": "35082229",
-  "browserHash": "d372b235",
-  "optimized": {},
-  "chunks": {}
+  "browserHash": "881ca961",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "f0af89b5",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "287ae8fd",
+      "needsInterop": true
+    },
+    "date-fns": {
+      "src": "../../node_modules/date-fns/index.js",
+      "file": "date-fns.js",
+      "fileHash": "86e405e3",
+      "needsInterop": false
+    },
+    "docx": {
+      "src": "../../node_modules/docx/dist/index.mjs",
+      "file": "docx.js",
+      "fileHash": "ccf24ba1",
+      "needsInterop": false
+    },
+    "file-saver": {
+      "src": "../../node_modules/file-saver/dist/FileSaver.min.js",
+      "file": "file-saver.js",
+      "fileHash": "be74a6f0",
+      "needsInterop": true
+    },
+    "jspdf": {
+      "src": "../../node_modules/jspdf/dist/jspdf.es.min.js",
+      "file": "jspdf.js",
+      "fileHash": "6084cfae",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "index.es-F7ND64ZI": {
+      "file": "index__es-F7ND64ZI.js"
+    },
+    "chunk-3527N3GG": {
+      "file": "chunk-3527N3GG.js"
+    },
+    "chunk-SITVF2AJ": {
+      "file": "chunk-SITVF2AJ.js"
+    },
+    "html2canvas.esm-NSBB4H3J": {
+      "file": "html2canvas__esm-NSBB4H3J.js"
+    },
+    "purify.es-VQSOYXUG": {
+      "file": "purify__es-VQSOYXUG.js"
+    },
+    "chunk-EQCVQC35": {
+      "file": "chunk-EQCVQC35.js"
+    }
+  }
 }
