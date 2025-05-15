@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import exportToWord from "../utils/exportToWord.jsx";
 import exportToPdf from "../utils/exportToPdf.jsx";
+import { exportToDocx } from "../utils/exportUtils.js";
 
-export default function ExportButton({ notes, noteTitle = "Meeting Notes" }) {
+export default function ExportButton({ notes, noteTitle = "Meeting Notes", transcript }) {
   const [exporting, setExporting] = useState(false);
   const [exportType, setExportType] = useState(null); // 'word', 'pdf', or 'text'
   const [exportSuccess, setExportSuccess] = useState(false);
@@ -18,7 +19,14 @@ export default function ExportButton({ notes, noteTitle = "Meeting Notes" }) {
 
     try {
       if (type === 'word') {
-        await exportToWord(notes, noteTitle);
+        // Use the new DOCX export function
+        const note = {
+          title: noteTitle,
+          content: notes,
+          transcript: transcript,
+          createdAt: new Date()
+        };
+        await exportToDocx(note);
       } else if (type === 'pdf') {
         await exportToPdf(notes, noteTitle);
       } else if (type === 'text') {

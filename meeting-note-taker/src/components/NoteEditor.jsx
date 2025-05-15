@@ -100,7 +100,11 @@ export default function NoteEditor({
       {/* Export/Import Buttons */}
       <div className="flex flex-wrap gap-2">
         <ImportButton onImport={handleImport} />
-        <ExportButton notes={note.content || ''} noteTitle={note.title} />
+        <ExportButton
+          notes={note.content || ''}
+          noteTitle={note.title}
+          transcript={note.transcript}
+        />
       </div>
     </section>
   );

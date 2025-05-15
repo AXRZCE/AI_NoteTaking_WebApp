@@ -1,16 +1,18 @@
 {
   "name": "meeting-note-taker",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "homepage": "https://your-username.github.io/meeting-note-taker",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.6",
     "date-fns": "^4.1.0",
     "docx": "^9.5.0",
     "file-saver": "^2.0.5",
@@ -27,9 +29,10 @@
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "gh-pages": "^6.3.0",
     "globals": "^16.0.0",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.6",
+    "tailwindcss": "^3.4.17",
     "vite": "^6.3.5"
   }
 }
