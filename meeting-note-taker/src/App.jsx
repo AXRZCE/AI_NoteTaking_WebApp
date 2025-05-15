@@ -208,8 +208,8 @@ export default function App() {
       {/* Header */}
       <header className={`flex items-center justify-between px-6 py-4 ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow border-b`}>
         <h1 className={`text-2xl font-bold tracking-tight ${currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
-          <span className="w-4 h-4 rounded-full bg-blue-600 inline-block mr-2"></span>
-          Meeting Note Taker
+          <span className="w-4 h-4 rounded-full bg-red-600 inline-block mr-2"></span>
+          Meeting Note Taker (UPDATED VERSION)
         </h1>
         <div className="space-x-2">
           <button
