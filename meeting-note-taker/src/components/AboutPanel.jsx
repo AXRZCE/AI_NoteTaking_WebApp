@@ -73,9 +73,10 @@ export default function AboutPanel({ open, onClose }) {
                   How do I transcribe online meeting audio?
                 </summary>
                 <p className="text-sm text-gray-600 mt-1 pl-4">
-                  For online meetings, you'll need to set your system to route meeting audio to your microphone input.
-                  On Windows, you can use "Stereo Mix" if available. On Mac, you might need a virtual audio cable solution
-                  like Loopback or BlackHole.
+                  Select "System Audio (Meetings)" in the Speech Recognition section, then click "Start".
+                  Your browser will ask for screen sharing permission - make sure to check "Share system audio"
+                  when prompted. This will capture audio from Zoom, Teams, or any other application playing sound
+                  on your computer.
                 </p>
               </details>
 
